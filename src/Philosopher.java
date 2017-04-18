@@ -6,6 +6,9 @@ import java.util.concurrent.Callable;
 public class Philosopher implements PhilosopherInterface, Callable
 {
 
+    protected String name;
+
+    protected State state;
 
     /**
      * Method where thread will "Sleep"?
@@ -42,5 +45,32 @@ public class Philosopher implements PhilosopherInterface, Callable
     @Override
     public Object call() throws Exception {
         return null;
+    }
+}
+
+enum State
+{
+    THINKING("Thinking", -1),
+    EATING("Eating", 1),
+    HUNGRY("Hungry", 0);
+
+    private String name;
+
+    private int code;
+
+    private State(String name, int val)
+    {
+        this.name = name;
+        this.code = val;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public int getCode()
+    {
+        return code;
     }
 }
