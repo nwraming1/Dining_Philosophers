@@ -3,7 +3,7 @@ import java.util.concurrent.Callable;
 /**
  * Created by nathanraming on 4/17/17.
  */
-public class Philosopher implements PhilosopherInterface, Callable
+public class Philosopher implements PhilosopherInterface, Runnable
 {
 
     protected String name;
@@ -43,8 +43,8 @@ public class Philosopher implements PhilosopherInterface, Callable
     }
 
     @Override
-    public Object call() throws Exception {
-        return null;
+    public void run(){
+
     }
 }
 
