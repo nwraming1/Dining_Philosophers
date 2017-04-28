@@ -1,4 +1,7 @@
 import java.util.concurrent.Callable;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by nathanraming on 4/17/17.
@@ -6,14 +9,58 @@ import java.util.concurrent.Callable;
 public class Philosopher implements PhilosopherInterface, Runnable
 {
 
-    protected String name;
+    protected int id;
 
     protected State state;
+
+    private ThreadLocalRandom random;
+
+    protected boolean log;
+
+    protected int waitTime;
+
+    private int eatingTimes = 0;
+
+    protected boolean running = true;
+
+    protected static Condition[] chopsticks;
+
+    protected static ReentrantLock lock = new ReentrantLock();
+
+    protected static final Condition AVALIABLE = lock.newCondition();
+
+    protected static final Condition INUSE = lock.newCondition();
+
+    protected static final int SLEEPMAX = 5000;
+
+    protected int leftC;
+
+    protected int rightC;
+
+
+    public Philosopher(boolean log, int id)
+    {
+        this.id = id;
+        leftC = id;
+        rightC = (id + 1) % DINERS;
+        this.log = log;
+        eatingTimes = 0;
+        state = State.THINKING;
+
+        if(chopsticks == null)
+        {
+            chopsticks = new Condition[DINERS];
+            for(int i = 0; i < chopsticks.length; i++)
+            {
+                chopsticks[i] = AVALIABLE;
+            }
+        }
+    }
 
     /**
      * Method where thread will "Sleep"?
      */
-    public void think()
+    public void think(int time)
     {
 
     }
@@ -44,7 +91,12 @@ public class Philosopher implements PhilosopherInterface, Runnable
 
     @Override
     public void run(){
+        random = ThreadLocalRandom.current();
+        while(running)
+        {
+            think(random.nextInt(waitTime));
 
+        }
     }
 }
 
