@@ -22,38 +22,29 @@ public class Philosopher implements PhilosopherInterface, Runnable
 
     protected boolean running = true;
 
-    protected static Condition[] chopsticks;
 
-    protected static ReentrantLock lock = new ReentrantLock();
-
-    protected static final Condition AVALIABLE = lock.newCondition();
-
-    protected static final Condition INUSE = lock.newCondition();
 
     protected static final int SLEEPMAX = 5000;
 
-    protected int leftC;
+    protected Chopstick leftC;
 
-    protected int rightC;
+    protected Chopstick rightC;
 
 
     public Philosopher(boolean log, int id)
     {
         this.id = id;
-        leftC = id;
-        rightC = (id + 1) % DINERS;
         this.log = log;
         eatingTimes = 0;
         state = State.THINKING;
+    }
 
-        if(chopsticks == null)
-        {
-            chopsticks = new Condition[DINERS];
-            for(int i = 0; i < chopsticks.length; i++)
-            {
-                chopsticks[i] = AVALIABLE;
-            }
-        }
+    public Philosopher(int id)
+    {
+        this.id = id;
+        this.log = log;
+        eatingTimes = 0;
+        state = State.THINKING;
     }
 
     /**
@@ -121,13 +112,13 @@ enum State
 
     private int code;
 
-    State(String name, int val)
+    State(String state, int val)
     {
-        this.name = name;
+        this.name = state;
         this.code = val;
     }
 
-    public String getName()
+    public String getState()
     {
         return name;
     }
