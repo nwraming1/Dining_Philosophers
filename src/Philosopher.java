@@ -14,7 +14,7 @@ public class Philosopher implements PhilosopherInterface, Runnable
 
     private ThreadLocalRandom random;
 
-    protected boolean log;
+    protected boolean log = false;
 
     protected int waitTime;
 
@@ -39,21 +39,17 @@ public class Philosopher implements PhilosopherInterface, Runnable
         state = State.THINKING;
     }
 
-    public Philosopher(int id)
-    {
-        this.id = id;
-        this.log = log;
-        eatingTimes = 0;
-        state = State.THINKING;
-    }
-
     /**
      * Method where thread will "Sleep"?
      */
     public void think(int time) throws InterruptedException
     {
         try{
+            state = State.THINKING;
+            printStatus();
             Thread.sleep(time);
+            state = State.HUNGRY;
+            printStatus();
         }
         catch(InterruptedException ie)
         {
@@ -64,17 +60,28 @@ public class Philosopher implements PhilosopherInterface, Runnable
     /**
      * Method where the philosopher will eat?
      */
-    public void eat()
+    public void eat(int time)
     {
-
+        try {
+            state = State.EATING;
+            printStatus();
+            Thread.sleep(time);
+        }
+        catch(InterruptedException ie)
+        {
+            System.out.println("Thread Died! Exiting...");
+            System.exit(1);
+        }
     }
 
     /**
      * This method will attempt to take the chopsticks if they are avaliable?
      */
     @Override
-    public void takeChopsticks() {
-
+    public void takeChopsticks()
+    {
+        leftC.getChopstick();
+        rightC.getChopstick();
     }
 
     /**
@@ -91,7 +98,13 @@ public class Philosopher implements PhilosopherInterface, Runnable
         while(running)
         {
             try {
+
                 think(random.nextInt(waitTime));
+                state = State.HUNGRY;
+                printStatus();
+                takeChopsticks();
+                eat(random.nextInt(waitTime));
+
             }
             catch(InterruptedException ie)
             {
@@ -99,6 +112,16 @@ public class Philosopher implements PhilosopherInterface, Runnable
                 System.exit(1);
             }
         }
+    }
+
+    public void eatStatPrint()
+    {
+        System.out.println("Philosopher " + id + " ate " + eatingTimes + " times.");
+    }
+
+    private void printStatus()
+    {
+        System.out.println("Philosopher " + id + " is " + state.getState());
     }
 }
 

@@ -28,15 +28,22 @@ public class Meal
         try {
 
             for (int i = 0; i < DINERS; i++) {
-                Philosopher philosopher = new Philosopher(i);
+                boolean log = Boolean.parseBoolean(args[1]);
+                Philosopher philosopher = new Philosopher(log, i);
                 philosopher.leftC = chopsticks[i];
                 philosopher.rightC = chopsticks[i+1 % DINERS];
                 philosophers[i] = philosopher;
                 exec.execute(philosophers[i]);
             }
 
-            int sleepTime = Integer.parseInt(args[1]);
+            int sleepTime = Integer.parseInt(args[0]);
             Thread.sleep(sleepTime);
+
+            for(int i = 0;i < DINERS; i++)
+            {
+                philosophers[i].eatStatPrint();
+            }
+            exec.shutdown();
 
         }
         catch(InterruptedException ie)

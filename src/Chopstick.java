@@ -29,7 +29,7 @@ public class Chopstick
         inUse.getAndSet(false);
     }
 
-    protected void getChopstick()throws InterruptedException
+    protected void getChopstick()
     {
         lock.lock();
         if(!inUse.get())
@@ -45,7 +45,8 @@ public class Chopstick
             }
             catch(InterruptedException ie)
             {
-                throw new InterruptedException(ie.getMessage());
+                System.out.println("Thread Died! Exiting...");
+                System.exit(1);
             }
         }
         lock.unlock();
