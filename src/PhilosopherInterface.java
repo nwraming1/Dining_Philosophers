@@ -3,9 +3,9 @@
  */
 public interface PhilosopherInterface
 {
-    public static final int DINERS = 5;
+    int DINERS = 5;
 
-    public void takeChopsticks ();
+    void takeChopsticks();
 
-    public void replaceChopsticks ();
+    void replaceChopsticks();
 }

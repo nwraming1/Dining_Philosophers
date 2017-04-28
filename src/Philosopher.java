@@ -1,4 +1,3 @@
-import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -60,9 +59,15 @@ public class Philosopher implements PhilosopherInterface, Runnable
     /**
      * Method where thread will "Sleep"?
      */
-    public void think(int time)
+    public void think(int time) throws InterruptedException
     {
-
+        try{
+            Thread.sleep(time);
+        }
+        catch(InterruptedException ie)
+        {
+            throw new InterruptedException(ie.getMessage());
+        }
     }
 
     /**
@@ -94,8 +99,14 @@ public class Philosopher implements PhilosopherInterface, Runnable
         random = ThreadLocalRandom.current();
         while(running)
         {
-            think(random.nextInt(waitTime));
-
+            try {
+                think(random.nextInt(waitTime));
+            }
+            catch(InterruptedException ie)
+            {
+                System.out.println("Thread " + id + " was interrupted! Exiting...");
+                System.exit(1);
+            }
         }
     }
 }
@@ -110,7 +121,7 @@ enum State
 
     private int code;
 
-    private State(String name, int val)
+    State(String name, int val)
     {
         this.name = name;
         this.code = val;
