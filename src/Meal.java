@@ -1,7 +1,10 @@
 import javax.management.monitor.Monitor;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.locks.Condition;
+
 
 /**
  * Created by nathanraming on 4/17/17.
@@ -16,6 +19,10 @@ public class Meal
 
     public static void main(String args[])
     {
+        if(args.length<2){
+            System.out.println("Usage: <time> <'T'/'F'>");
+        }
+        boolean log;
         chopsticks = new Chopstick[DINERS];
         philosophers = new Philosopher[DINERS];
         for(int i = 0; i < chopsticks.length; i++)
@@ -26,9 +33,14 @@ public class Meal
 
         ExecutorService exec = Executors.newFixedThreadPool(DINERS);
         try {
+            if(args[1].toLowerCase().equals("t")) {
+                log=true;
+            }
+            else{
+                log=false;
+            }
 
             for (int i = 0; i < DINERS; i++) {
-                boolean log = Boolean.parseBoolean(args[1]);
                 Philosopher philosopher = new Philosopher(log, i);
                 philosopher.leftC = chopsticks[i];
                 philosopher.rightC = chopsticks[i+1 % DINERS];
@@ -39,6 +51,11 @@ public class Meal
             int sleepTime = Integer.parseInt(args[0]);
             Thread.sleep(sleepTime);
 
+            for(Philosopher philo: philosophers)
+            {
+                philo.setRunningFalse();
+                System.out.println("Kill signal sent to Philosopher " + philo.id + ".");
+            }
             for(int i = 0;i < DINERS; i++)
             {
                 philosophers[i].eatStatPrint();

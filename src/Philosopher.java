@@ -1,3 +1,6 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -14,7 +17,7 @@ public class Philosopher implements PhilosopherInterface, Runnable
 
     private ThreadLocalRandom random;
 
-    protected boolean log = false;
+    protected boolean log;
 
     protected int waitTime;
 
@@ -37,6 +40,14 @@ public class Philosopher implements PhilosopherInterface, Runnable
         this.log = log;
         eatingTimes = 0;
         state = State.THINKING;
+        if(log){
+            try {
+                PrintStream out = new PrintStream(new File("log.txt"));
+                System.setOut(out);
+            }catch(FileNotFoundException fnfe){
+                System.out.println("Can't find file");
+            }
+        }
     }
 
     /**
@@ -63,9 +74,11 @@ public class Philosopher implements PhilosopherInterface, Runnable
     public void eat(int time)
     {
         try {
+            takeChopsticks();
             state = State.EATING;
             printStatus();
             Thread.sleep(time);
+            replaceChopsticks();
         }
         catch(InterruptedException ie)
         {
@@ -89,7 +102,8 @@ public class Philosopher implements PhilosopherInterface, Runnable
      */
     @Override
     public void replaceChopsticks() {
-
+        leftC.replaceChopstick();
+        rightC.replaceChopstick();
     }
 
     @Override
@@ -98,13 +112,8 @@ public class Philosopher implements PhilosopherInterface, Runnable
         while(running)
         {
             try {
-
                 think(random.nextInt(waitTime));
-                state = State.HUNGRY;
-                printStatus();
-                takeChopsticks();
                 eat(random.nextInt(waitTime));
-
             }
             catch(InterruptedException ie)
             {
@@ -122,6 +131,11 @@ public class Philosopher implements PhilosopherInterface, Runnable
     private void printStatus()
     {
         System.out.println("Philosopher " + id + " is " + state.getState());
+    }
+
+    protected void setRunningFalse()
+    {
+        running = false;
     }
 }
 
